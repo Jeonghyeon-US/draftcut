@@ -1,0 +1,46 @@
+Draftcut
+Copyright 2026 Jeonghyeon Lim
+
+This product is distributed under the Apache License 2.0 (see LICENSE).
+
+--------------------------------------------------------------------------------
+Third-party components
+--------------------------------------------------------------------------------
+
+No third-party source code is vendored in this repository. The dependencies
+listed below must be installed separately before use and are governed by their
+respective licenses.
+
+Python packages (pip):
+  numpy       BSD 3-Clause          - compatible with Apache-2.0 distribution
+  Pillow      MIT-CMU               - compatible with Apache-2.0 distribution
+  mlx-whisper (optional)  MIT       - only if you use speech transcription.
+                                      Apple Silicon only.
+  pyobjc-framework-Vision / pyobjc-framework-Cocoa (optional)  MIT
+    - macOS only, for on-screen text via Apple Vision. PyObjC components such
+      as libffi have separate license terms; consult the installed packages.
+
+External executables (outside Python):
+  ffmpeg / ffprobe
+    ffmpeg is LGPL or GPL depending on how it was built. Inspect the installed
+    build's configuration and license information.
+
+    Draftcut invokes ffmpeg and ffprobe as separate processes. It does not link
+    the libav* libraries (no ctypes, cffi, PyAV or ffmpeg-python) and does not
+    bundle an ffmpeg binary; you install it yourself.
+
+    If you redistribute an ffmpeg binary together with Draftcut, that
+    distribution carries the obligations of that ffmpeg build's license (GPL if
+    it is a GPL build). The current encoding paths require libx264, a GPL
+    component; an LGPL-only build without it cannot run those paths unchanged.
+
+Model weights:
+  No model weights are included in this source tree. The distribution gitignore
+  excludes mlx_models/; model downloads and caches may use other locations.
+  Models used for speech transcription are downloaded separately and are
+  governed by their own licenses.
+
+--------------------------------------------------------------------------------
+This file records facts; it is not legal advice.
+Seek professional review before public distribution if you need it.
+--------------------------------------------------------------------------------

@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0", "output_id": "out-guardrail-1", "skill_id": "editorial_guardrail", "output_kind": "constraint", "confidence": 1,
+  "scope": {"source_id": "screenrec-ko-001", "range": {"start": {"value": 180000, "timebase": {"num": 1, "den": 1000}}, "end": {"value": 240000, "timebase": {"num": 1, "den": 1000}}}},
+  "impact": "Audit evidence segment is preserved before any edit decision.", "evidence_ids": ["ev-audit"],
+  "dependencies": [{"skill_id": "take_selection", "required": false, "on_missing": "empty_result"}, {"skill_id": "music_direction", "required": false, "on_missing": "skip"}],
+  "backend_selections": [{"purpose": "stt", "backend_id": "example-gpt-transcribe", "backend_version": "contract-example", "cost_tier": "유료"}],
+  "review": {"severity": "warning", "blocking": true, "state": "approved", "cost_approval": {"call_id": "call-stt-001", "estimated_cost": {"amount": 0.12, "currency": "USD", "basis": "contract example estimate"}, "approved_by": "editor-1", "timestamp": "2026-08-10T00:00:00Z"}}
+}

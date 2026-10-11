@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "videoedit:index:1",
+  "title": "Observation Index",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "index_id", "sources", "evidence", "markers", "transcript", "backend_selections"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "index_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$"},
+    "sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source"}},
+    "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+    "markers": {"type": "array", "items": {"$ref": "#/$defs/marker"}},
+    "transcript": {"type": "array", "items": {"$ref": "#/$defs/transcript"}},
+    "transcription_chunks": {"type": "array", "items": {"$ref": "#/$defs/transcription_chunk"}},
+    "onscreen_text": {"type": "array", "items": {"$ref": "#/$defs/onscreen_text"}},
+    "backend_selections": {"type": "array", "items": {"$ref": "#/$defs/backend_selection"}}
+  },
+  "$defs": {
+    "timebase": {"type": "object", "additionalProperties": false, "required": ["num", "den"], "properties": {"num": {"type": "integer", "minimum": 1}, "den": {"type": "integer", "minimum": 1}}},
+    "time": {"type": "object", "additionalProperties": false, "required": ["value", "timebase"], "properties": {"value": {"type": "integer"}, "timebase": {"$ref": "#/$defs/timebase"}}},
+    "range": {"type": "object", "additionalProperties": false, "required": ["start", "end"], "properties": {"start": {"$ref": "#/$defs/time"}, "end": {"$ref": "#/$defs/time"}}},
+    "source": {"type": "object", "additionalProperties": false, "required": ["source_id", "sha256", "duration"], "properties": {"source_id": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "duration": {"$ref": "#/$defs/time"}, "capture": {"$ref": "#/$defs/capture_provenance"}}},
+    "capture_provenance": {"type": "object", "additionalProperties": false, "required": ["target", "operation_path", "validation"], "properties": {"target": {"type": "object", "additionalProperties": false, "required": ["app", "window_identifier", "permission_signal"], "properties": {"app": {"type": "string", "minLength": 1}, "window_identifier": {"type": "string", "minLength": 1}, "permission_signal": {"type": "string", "minLength": 1}}}, "operation_path": {"enum": ["human_direct", "steering"]}, "validation": {"type": "object", "additionalProperties": false, "required": ["verdict", "off_target_frame_count", "evidence_ids"], "properties": {"verdict": {"enum": ["pass", "refilm", "human_review"]}, "off_target_frame_count": {"type": "integer", "minimum": 0}, "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}, "refilm_reason": {"type": "string"}}}}},
+    "evidence": {"type": "object", "additionalProperties": false, "required": ["evidence_id", "kind", "source_id", "range", "provenance"], "properties": {"evidence_id": {"type": "string"}, "kind": {"enum": ["frame", "signal", "human"]}, "source_id": {"type": "string"}, "range": {"$ref": "#/$defs/range"}, "provenance": {"type": "object", "additionalProperties": false, "properties": {"frame_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "frame_time": {"$ref": "#/$defs/time"}, "tool": {"type": "string"}, "version": {"type": "string"}, "reviewer": {"type": "string"}, "rationale": {"type": "string"}}}}},
+    "marker": {"type": "object", "additionalProperties": false, "required": ["marker_id", "marker_type", "source_id", "range", "evidence_ids"], "properties": {"marker_id": {"type": "string"}, "marker_type": {"enum": ["transcript_segment", "shot_scene_boundary", "silence_interval", "loudness_peak", "onscreen_text", "sensitive_information_candidate", "behavior_reaction_candidate", "screen_activity"]}, "source_id": {"type": "string"}, "range": {"$ref": "#/$defs/range"}, "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}}},
+    "word": {"type": "object", "additionalProperties": false, "required": ["text", "start", "end", "confidence"], "properties": {"text": {"type": "string", "minLength": 1}, "start": {"$ref": "#/$defs/time"}, "end": {"$ref": "#/$defs/time"}, "confidence": {"type": "number", "minimum": 0, "maximum": 1}}},
+    "transcript": {"type": "object", "additionalProperties": false, "required": ["utterance_id", "source_id", "range", "text", "provenance_status", "utterance_confidence", "word_confidence", "speaker_confidence", "word_timestamps_available"], "properties": {"utterance_id": {"type": "string"}, "source_id": {"type": "string"}, "range": {"$ref": "#/$defs/range"}, "text": {"type": "string"}, "provenance_status": {"enum": ["provided", "generated", "human_reviewed", "unconfirmed"]}, "utterance_confidence": {"type": "number", "minimum": 0, "maximum": 1}, "word_confidence": {"type": "number", "minimum": 0, "maximum": 1}, "speaker_confidence": {"type": "number", "minimum": 0, "maximum": 1}, "word_timestamps_available": {"type": "boolean"}, "words": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/word"}}}},
+    "transcription_chunk": {"type": "object", "additionalProperties": false, "required": ["chunk_id", "original_range", "actual_offset", "reassembly_evidence_ids"], "properties": {"chunk_id": {"type": "string", "minLength": 1}, "original_range": {"$ref": "#/$defs/range"}, "actual_offset": {"$ref": "#/$defs/time"}, "reassembly_evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}}},
+    "onscreen_text": {"type": "object", "additionalProperties": false, "required": ["source_id", "time", "text", "confidence"], "properties": {"source_id": {"type": "string"}, "time": {"$ref": "#/$defs/time"}, "text": {"type": "string", "minLength": 1}, "confidence": {"type": "number", "minimum": 0, "maximum": 1}}},
+    "backend_selection": {"type": "object", "additionalProperties": false, "required": ["purpose", "backend_id", "backend_version", "cost_tier"], "properties": {"purpose": {"enum": ["stt", "caption_renderer", "ocr", "shot_scene_boundary", "screen_activity"]}, "backend_id": {"type": "string", "minLength": 1}, "backend_version": {"type": "string", "minLength": 1}, "cost_tier": {"enum": ["무료-로컬", "쿼터", "유료"]}}}
+  }
+}

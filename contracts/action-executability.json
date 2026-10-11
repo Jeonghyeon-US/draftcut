@@ -1,0 +1,288 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "registry_version": "1.0",
+  "derived_from": "the ve02 action-executability probe and its independent audit",
+  "entries": [
+    {
+      "action": "act_probe_capture_target",
+      "v1_executable": "blocked(automated probe environment has no live screen-recording permission or target window)",
+      "verification_kind": "rejection"
+    },
+    {
+      "action": "act_capture_window",
+      "v1_executable": "blocked(automated probe environment has no live screen-recording permission or target window)",
+      "verification_kind": "rejection"
+    },
+    {
+      "action": "act_operate_capture_target",
+      "v1_executable": "blocked(automated probe environment has no live screen-recording permission or Computer Use session)",
+      "verification_kind": "rejection"
+    },
+    {
+      "action": "act_extract_capture_evidence_frames",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "specified source times yield decoded evidence tiles with expected dimensions and distinct source-frame hashes"
+    },
+    {
+      "action": "act_mark_segment",
+      "v1_executable": "plan_only",
+      "verification_kind": "plan_contract"
+    },
+    {
+      "action": "act_flag_for_review",
+      "v1_executable": "plan_only",
+      "verification_kind": "plan_contract"
+    },
+    {
+      "action": "act_flag_issue",
+      "v1_executable": "plan_only",
+      "verification_kind": "plan_contract"
+    },
+    {
+      "action": "act_preserve_segment",
+      "v1_executable": "plan_only",
+      "verification_kind": "plan_contract"
+    },
+    {
+      "action": "act_lock_order",
+      "v1_executable": "plan_only",
+      "verification_kind": "plan_contract"
+    },
+    {
+      "action": "act_select_source_segment",
+      "v1_executable": "plan_only",
+      "verification_kind": "plan_contract"
+    },
+    {
+      "action": "act_assemble_segment",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "ordered time mapping and boundary samples"
+    },
+    {
+      "action": "act_reorder_segments",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "ordered time mapping and boundary samples"
+    },
+    {
+      "action": "act_trim_segment",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "source range and A/V boundary"
+    },
+    {
+      "action": "act_ripple_delete",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "source range and no-gap boundary"
+    },
+    {
+      "action": "act_insert_segment",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "ordered mapping and insertion boundary"
+    },
+    {
+      "action": "act_crossfade_audio",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "overlap RMS and clipping"
+    },
+    {
+      "action": "act_j_cut",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "A/V offset"
+    },
+    {
+      "action": "act_l_cut",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "A/V offset"
+    },
+    {
+      "action": "act_speed_change",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "PTS and frame count"
+    },
+    {
+      "action": "act_freeze_frame",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "decoded frame hashes across hold"
+    },
+    {
+      "action": "act_repeat_segment",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "repetition boundary samples; params.contiguous=true means adjacent repeats and false means declared non-contiguous timeline reuse"
+    },
+    {
+      "action": "act_crop_reframe",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "crop coordinates and frame comparison"
+    },
+    {
+      "action": "act_scale_position",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "padding and position pixels"
+    },
+    {
+      "action": "act_zoom_keyframes",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "zoom centre and scale"
+    },
+    {
+      "action": "act_overlay_asset",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "asset hash and output pixels"
+    },
+    {
+      "action": "act_blur_region",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "ROI variance before and after"
+    },
+    {
+      "action": "act_color_adjust",
+      "v1_executable": "no(out-of-scope)",
+      "verification_kind": "rejection"
+    },
+    {
+      "action": "act_apply_lut",
+      "v1_executable": "no(out-of-scope)",
+      "verification_kind": "rejection"
+    },
+    {
+      "action": "act_add_caption_segment",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "caption PNG hash and output pixels inside the caption rectangle"
+    },
+    {
+      "action": "act_style_caption_segment",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "caption PNG hash, style variant geometry, and output pixels"
+    },
+    {
+      "action": "act_animate_graphic",
+      "v1_executable": "no(out-of-scope)",
+      "verification_kind": "rejection"
+    },
+    {
+      "action": "act_gain",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "gain dB delta"
+    },
+    {
+      "action": "act_normalize_loudness",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "independent loudnorm I and TP"
+    },
+    {
+      "action": "act_noise_reduce",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "band-energy delta"
+    },
+    {
+      "action": "act_fade_audio",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "edge RMS curve"
+    },
+    {
+      "action": "act_duck_audio",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "duck envelope attenuation/attack/release and exact PCM tail-only prefix across rerender"
+    },
+    {
+      "action": "act_mix_audio",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "input alignment"
+    },
+    {
+      "action": "act_add_music",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "cue mapping (approval is enforced by the contract checker on the EditPlan, not by this probe)"
+    },
+    {
+      "action": "act_add_sfx",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "cue mapping (approval is enforced by the contract checker on the EditPlan, not by this probe)"
+    },
+    {
+      "action": "act_add_ambience",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "coverage and loop boundaries"
+    },
+    {
+      "action": "act_replace_caption_text",
+      "v1_executable": "no(out-of-scope)",
+      "verification_kind": "rejection"
+    },
+    {
+      "action": "act_replace_audio_language",
+      "v1_executable": "no(out-of-scope)",
+      "verification_kind": "rejection"
+    },
+    {
+      "action": "act_change_canvas",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "SAR DAR and frame rate"
+    },
+    {
+      "action": "act_export_media",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "decode metadata log and hash"
+    },
+    {
+      "action": "act_remux_media",
+      "v1_executable": "yes(effect-verified)",
+      "verification_kind": "effect_measurement",
+      "t2_effect_requirement": "container codec and decode"
+    },
+    {
+      "action": "act_register_external_asset",
+      "v1_executable": "no(out-of-scope)",
+      "verification_kind": "rejection"
+    },
+    {
+      "action": "act_select_multicam_angle",
+      "v1_executable": "no(out-of-scope)",
+      "verification_kind": "rejection"
+    },
+    {
+      "action": "act_export_otio",
+      "v1_executable": "no(out-of-scope)",
+      "verification_kind": "rejection"
+    },
+    {
+      "action": "act_export_mlt",
+      "v1_executable": "no(out-of-scope)",
+      "verification_kind": "rejection"
+    },
+    {
+      "action": "act_operate_nle_ui",
+      "v1_executable": "no(out-of-scope)",
+      "verification_kind": "rejection"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+__pycache__/
+*.pyc
+.DS_Store
+# Outputs and working files
+*.mp4
+*.mov
+*.wav
+*.m4a
+*.mp3
+*.png
+*.jpg
+scratch/
+out/
+# Local model conversion output (other download/cache paths may differ)
+mlx_models/
+# Secrets - this repository holds none
+*.env
+.env*
+secrets*
+*.key
+*.pem
+credentials*

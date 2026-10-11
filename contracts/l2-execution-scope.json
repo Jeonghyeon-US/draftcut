@@ -1,0 +1,19 @@
+{
+  "scope_version": "1.0",
+  "scope_kind": "L2 dispatcher action-name boundary",
+  "dispatch_boundary_notice": "This boundary means only that the executor dispatches the action name. It does not mean that a Plan actually renders.",
+  "known_counterexample": "act_overlay_asset is in this list, but L2 has rejected a Plan when its params did not meet the executor requirements (ve149 §3-2).",
+  "actions": [
+    "act_trim_segment",
+    "act_assemble_segment",
+    "act_scale_position",
+    "act_crop_reframe",
+    "act_add_caption_segment",
+    "act_speed_change",
+    "act_overlay_asset",
+    "act_reorder_segments",
+    "act_freeze_frame",
+    "act_zoom_keyframes",
+    "act_blur_region"
+  ]
+}

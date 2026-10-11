@@ -1,0 +1,21 @@
+# Draftcut - runtime dependencies
+# Two Python packages are required for the complete workflow. Some tools use only the standard library.
+numpy>=1.24
+Pillow>=10.0        # imported as PIL
+
+# Required tools that are NOT Python packages:
+#   ffmpeg / ffprobe   - required for rendering and media analysis
+#                        macOS: brew install ffmpeg
+#   Observation and alignment tools require both executables on PATH.
+#   The environment checker, executor and verify_render.py also support
+#   DRAFTCUT_FFMPEG / DRAFTCUT_FFPROBE.
+#
+# -- Optional, only if you use that feature (both macOS only) -----------------
+#   On-screen text (`skills/media-index/ocr_vision.py`,
+#   `skills/mask-plan/locate_sensitive.py`) uses Apple Vision:
+#       pip install pyobjc-framework-Vision pyobjc-framework-Cocoa
+#   Speech transcription (`skills/media-index/transcribe_speech.py`),
+#   Apple Silicon only:
+#       pip install mlx-whisper
+#
+# Run `python3 check_env.py` to see what is missing here.
