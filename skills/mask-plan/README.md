@@ -49,8 +49,8 @@ the command above uses generic example values.
 ## Check pixels and strings before delivery
 
 Run the pixel check on every render or repair cycle that uses a supported plan.
-`verify_render.py` also rejects any plan containing `act_speed_change`, because
-it reuses the coverage gate's Plan loader. For speed-changed deliveries, use
+`verify_render.py` shares the coverage gate's Plan loader and all its plan
+refusals listed below. For deliveries outside that supported scope, use
 rendered-frame OCR and human inspection; this command cannot complete the
 pixel check.
 
@@ -94,13 +94,10 @@ message. The script treats this as a failure rather than an empty detection
 result; do not interpret the failure as "nothing sensitive on screen".
 
 `coverage_gate.py` checks data without decoding or rendering, so it can run in
-a sandbox. It assumes one source, the same tick unit for detections and all
-plan ranges, no repeated source intervals, and no geometric transforms except
-crop offsets. It does not check these assumptions: timebase and source identity
-are ignored, only the first matching clip is checked, and scale, pad and zoom are
-not mapped. A freeze frame holds one source instant for many output frames; the
-gate checks only the first of them. A PASS outside these limits does not
-establish coverage.
+a sandbox. It refuses unsupported source, time and geometry mappings rather than
+checking only their first placement. The exact refusals and remaining assumptions
+are listed below. A PASS outside those remaining assumptions does not establish
+coverage.
 
 Checking without opening asset files is possible only for overlays whose
 referenced `assets[]` declare `pixel_width`/`pixel_height`. These fields are
@@ -178,17 +175,68 @@ them from PNG files. It reports that fallback and refuses to guess.
 
 ## Inputs the coverage check rejects
 
-- a plan containing `act_speed_change` (also rejected by `verify_render.py`) —
- source time no longer maps linearly onto the timeline, and an incorrect mapping
- would give an unreliable coverage result
+- `act_speed_change` or `act_freeze_frame`: a source instant does not map to one
+ output instant with the same elapsed time
+- clip or overlay endpoint `value` ticks whose type is not integer, non-positive
+ clip source or timeline lengths, or unequal source/timeline lengths
+- duplicate `segment_id` entries in `source_segments`, duplicate `clip_id` entries
+ in `timeline_clips`, or duplicate `asset_id` entries in `assets`
+- overlapping source ranges in timeline clips, including repeated placements;
+ ranges that only touch at their half-open endpoints are accepted
+- clips referencing multiple sources, missing `source_segments`, or a clip whose
+ `source_segment_id` does not resolve to a segment with a `source_id`
+- missing or mixed `timebase` values at either endpoint of clip source/timeline
+ ranges or overlay timeline ranges; equivalent fractions such as 1/600 and
+ 2/1200 are accepted
+- any action outside `coverage_gate.py`'s `ALLOWED_ACTIONS`, including unknown
+ names, scale/padding, zoom and repeat declarations; the list accepts handled
+ crops and overlays, clip-placement declarations, annotations, fixed blur,
+ captions and audio effects that do not move source-video pixels or source time
+- a crop missing `source_segment_id` or `params`, or referencing a segment not
+ declared in `source_segments`, even if no timeline clip places that segment
+- a crop on a segment referenced by a timeline clip whose `width`/`height` differs
+ from `output_policy.width/height`, or whose output dimensions are undeclared:
+ crop offsets alone cannot map it; only crops with `params` on declared, unplaced
+ segments are ignored
+- two or more crops on a placed segment, even when their values are identical
+- geometry values read by the gate whose type is not integer: asset
+ `pixel_width`/`pixel_height`, overlay `overlay_x`/`overlay_y`, placed-crop
+ `x`/`y`/`width`/`height`, and `output_policy.width/height`; floats, strings and
+ bools are refused, and asset dimensions must also be positive
+- a declared overlay `enable_axis` other than `final_timeline`, or a declared
+ `coordinate_origin` other than `top_left` on an overlay or a placed crop; absent
+ fields retain the same axis and origin assumptions
 - an overlay whose asset declares no dimensions and has no file to measure
+
+All plan refusals also apply to `verify_render.py` through its shared loader.
+When a detection frame supplies a `timebase`, the coverage check compares it
+with the plan and refuses invalid or different units. Detection `pts` must be
+of integer type, even on frames with no hits; strings, floats and bools are
+refused. Each detection box must contain exactly four values of integer type
+with `x0 < x1` and `y0 < y1`; empty or reversed boxes are refused. The sampling
+step must be of integer type and at least 1; the default remains 2. Malformed
+plans and detections, including JSON parsing failures and missing input files,
+produce a refusal rather than an uncaught input exception.
 
 ## Not covered here
 
-Within the assumptions above, the gate samples coverage of the boxes **that were
-detected**. It says nothing about what detection missed. Sampling density still
-requires judgment: inspect transitions and fast movement at a suitable cadence
-before delivery.
+The current `locate_sensitive.py` output supplies no detection timebase. Its
+integer `pts` must use the plan's tick unit; the gate cannot verify that unit when
+it is absent. With no crop, the EditPlan has no source dimensions to compare with
+the output canvas, so unchanged source geometry remains an unchecked assumption.
+The loader requires positive, equal clip source/timeline lengths but is not a
+full contract validator and does not verify rendered timing. Speed and zoom
+actions are refused by name regardless of their speed factor or zoom value.
+Clip placement is authoritative: segment `source_range` need not match the
+clip range, and timeline overlaps across tracks are not rejected.
+
+Within these remaining assumptions, the gate checks coverage of the boxes **that
+were detected**. It adds intersecting mask boundaries to the sample grid, so it
+misses no uncovered integer pixel in a detected box at any valid positive integer
+step, including the default step of 2. This geometry check says nothing about
+what detection missed or whether the masks rendered correctly. Temporal sampling
+still requires judgment: inspect transitions and fast movement at a suitable
+cadence before delivery.
 
 Do not invent a mask for an unknown motion path. When `motion_triage.py` reports
 `cut`, a person must decide whether to remove that interval or obtain more

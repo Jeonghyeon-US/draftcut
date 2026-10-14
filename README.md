@@ -73,12 +73,42 @@ Run `validate_plan.py` before `--validate-only`. The latter does not read the pl
 asset files or hashes, or execute ffmpeg; a `validated` result alone does not establish
 that the plan is correct or will render.
 
-`coverage_gate.py` assumes one source, the same tick unit for detections and all plan
-ranges, a 1:1 time mapping (no repeated source intervals or freeze frames), and no geometric
-transforms except crop offsets. It does not validate these assumptions: it checks only the
-first matching clip and does not account for scale, padding or zoom. It rejects speed
-changes. A PASS outside these limits does not establish coverage, and the tool cannot
-check missed detections.
+`coverage_gate.py` refuses speed changes, freeze frames, overlapping source ranges,
+multiple or unresolved sources, duplicate segment or clip IDs, missing or mixed
+clip/overlay timebases, and actions outside its allowlist (including scale, padding,
+zoom and unknown names). Duplicate `asset_id` entries are also refused. Clip and
+overlay endpoint ticks and detection `pts` must be of integer type; strings, floats
+and bools are refused, including `pts` on frames with no hits. Clip source/timeline
+lengths must be positive and equal. Each detection box must contain exactly four
+values of integer type with `x0 < x1` and `y0 < y1`. Geometry read by the gate must
+also be of integer type: asset `pixel_width`/`pixel_height`, overlay
+`overlay_x`/`overlay_y`, placed-crop `x`/`y`/`width`/`height`, and
+`output_policy.width/height`; asset dimensions must be positive.
+
+Crops missing `source_segment_id` or `params`, or referencing an undeclared segment,
+are refused even if unplaced. Only crops with `params` on declared, unplaced
+segments are ignored. Placed crops must declare output-sized dimensions; two or
+more crops on a placed segment are refused even when their values are identical.
+Declared overlay `enable_axis` must be `final_timeline`; declared
+`coordinate_origin` on overlays or placed crops must be `top_left`. Absent axis
+or origin fields retain these assumptions. The sampling step must be of integer
+type and at least 1; the default remains 2. Malformed plans and detections,
+including JSON parsing failures and missing input files, produce a refusal.
+Speed and zoom actions are refused by name regardless of their speed factor or
+zoom value. Clip placement is authoritative: segment `source_range` need not
+match the clip range, and timeline overlaps across tracks are not rejected.
+Equivalent rational timebases are accepted, and detection timebases are compared
+when supplied. The current detector supplies none, so a common detection tick
+unit remains unchecked. Without a crop, the plan has no source dimensions to
+compare with the output canvas; unchanged source geometry remains an assumption.
+This is not a full contract validator and does not verify rendered timing.
+Detection-box extent is set by `locate_sensitive.py`, from the first match to the
+line end. The sample grid includes intersecting mask boundaries, so it misses no
+uncovered integer pixel in a detected box at any valid positive integer step,
+including the default step of 2. Missed detections and correct rendering are not
+established by this geometry check, and a PASS outside the remaining assumptions
+does not establish coverage. `verify_render.py` shares all plan refusals through
+the same loader.
 
 ### 4. Recover a cut list from a finished edit
 
